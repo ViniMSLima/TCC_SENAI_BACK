@@ -12,15 +12,44 @@ class UserController {
         }
     }
 
-    static async postUser(req, res) {
-        const { nome, data, tempo, f1, f2, f3, f4, f5, tentativas, qtd_formas, acertos } = req.body;
+    static async test(req, res) {
+        try {
+            return res.status(200).send({message: "testing" });
+        } catch (error) {
+            return res.status(404).send({ error: 'Users not found!' });
+        }
+    }
 
-        if (!nome || !data || !tempo || !f1 || !f2 || !f3 || !f4 || !f5)
+    static async getUserByBoschID(req, res) {
+        try {
+            const { boschID } = req.body;
+    
+            const user = await User.findOne({ boschID: boschID });
+    
+            if (!user) {
+                return res.status(404).send({ error: 'User not found!' });
+            }
+    
+            return res.status(200).send({ user });
+        } catch (error) {
+            return res.status(500).send({ error: 'Internal server error' });
+        }
+    }
+    
+    static async postUser(req, res) {
+        const { name, birthdate, adm, sex, BoschID, email, cep } = req.body;
+
+        if (!name || !birthdate || !adm || !sex || !BoschID || !email || !cep)
             return res.status(400).send({ message: 'Field\'s can\'t be empty' });
 
         const user = new User({
-            nome,
-            data,
+            name,
+            birthdate,
+            adm,
+            sex,
+            BoschID,
+            email,
+            cep,
             release: Date.now(),
             createdAt: Date.now(),
         });
@@ -44,6 +73,24 @@ class UserController {
             return res.status(500).send({ message: 'Something went wrong while clearing Users' });
         }
     }
+
+    static async deleteById(req, res) {
+        const { id } = req.params;
+        
+        try {
+            const deletedUser = await User.findByIdAndDelete(id);
+    
+            if (!deletedUser) {
+                return res.status(404).send({ message: 'User not found' });
+            }
+    
+            return res.status(200).send({ message: 'User deleted successfully' });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).send({ message: 'Something went wrong while deleting the User' });
+        }
+    }
+    
 
 }
 
