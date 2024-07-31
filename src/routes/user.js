@@ -1,15 +1,16 @@
 const express = require("express");
-const PlayerController = require("../controller/userController");
+const userController = require("../controller/userController");
 const router = express.Router();
 
 router
-  .get("/getusers", PlayerController.getUsers)
-  .get("/getuserbyboschid", PlayerController.getUserByBoschID)
-  .get("/deleteusers", PlayerController.clearUsers)
-  .get("/test", PlayerController.test)
+  .get("/getusers", userController.getUsers)
+  .get("/getuserbyboschid", userController.getUserByBoschID)
+  .get("/deleteusers", userController.clearUsers)
+  .get("/userlogin", userController.userLogin)
 
-  .post("/postuser", PlayerController.postUser)
+  .post("/postuser", userController.postUser)
 
-  .delete("/deleteuser", PlayerController.deleteById);
+  .delete("/clearusers", userController.clearUsers)
+  .delete("/deleteuser", userController.deleteById);
 
 module.exports = router;

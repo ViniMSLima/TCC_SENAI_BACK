@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
     minlength: 3,
   },
   birthdate: {
-    type: Date,
+    type: String,
     required: true,
     minlength: 2,
   },
@@ -17,7 +17,7 @@ const UserSchema = new mongoose.Schema({
     minlength: 2,
   },
   sex: {
-    type: Boolean,
+    type: String,
     required: true,
     minlength: 2,
   },
@@ -25,6 +25,11 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 2,
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 12
   },
   email: {
     type: String,

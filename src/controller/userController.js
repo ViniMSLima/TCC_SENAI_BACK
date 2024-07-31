@@ -1,5 +1,6 @@
 const { User } = require("../models/user");
-
+const jwt = require("jsonwebtoken");
+var CryptoJS = require("crypto-js");
 require("dotenv").config();
 
 class UserController {
@@ -12,9 +13,23 @@ class UserController {
         }
     }
 
-    static async test(req, res) {
+    static async userLogin(req, res) {
         try {
-            return res.status(200).send({message: "testing" });
+            const { id, password } = req.body;
+            
+            const user = await User.findOne({ BoschID: id });
+            if (!user) {
+                return res.status(401).send({ error: 'User not found!' });
+            }
+
+            var decrypted = CryptoJS.AES.decrypt(user.password, process.env.SECRET);
+            decrypted = decrypted.toString(CryptoJS.enc.Utf8);
+
+            if (decrypted != password) {
+                return res.status(401).send({ error: 'Invalid password!' });
+            }
+
+            return res.status(200).send({message: "RETORNA O JWT AQUI IRMAO" });
         } catch (error) {
             return res.status(404).send({ error: 'Users not found!' });
         }
@@ -24,7 +39,7 @@ class UserController {
         try {
             const { boschID } = req.body;
     
-            const user = await User.findOne({ boschID: boschID });
+            const user = await User.findOne({ BoschID: boschID });
     
             if (!user) {
                 return res.status(404).send({ error: 'User not found!' });
@@ -37,10 +52,12 @@ class UserController {
     }
     
     static async postUser(req, res) {
-        const { name, birthdate, adm, sex, BoschID, email, cep } = req.body;
+        const { name, birthdate, adm, sex, BoschID, password, email, cep } = req.body;
 
-        if (!name || !birthdate || !adm || !sex || !BoschID || !email || !cep)
+        if (!name || !birthdate || !adm || !sex || !BoschID || !password || !email || !cep)
             return res.status(400).send({ message: 'Field\'s can\'t be empty' });
+        
+        const encrypted = CryptoJS.AES.encrypt(password, process.env.SECRET).toString();
 
         const user = new User({
             name,
@@ -48,6 +65,7 @@ class UserController {
             adm,
             sex,
             BoschID,
+            password: encrypted,
             email,
             cep,
             release: Date.now(),
