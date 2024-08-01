@@ -16,22 +16,39 @@ class UserController {
     static async userLogin(req, res) {
         try {
             const { id, password } = req.body;
-            
+
+            if (!id || !password) {
+                return res.status(400).send({ error: 'Fill in all the fields!' });
+            }
+
             const user = await User.findOne({ BoschID: id });
             if (!user) {
                 return res.status(401).send({ error: 'User not found!' });
             }
 
-            var decrypted = CryptoJS.AES.decrypt(user.password, process.env.SECRET);
+            var decrypted = CryptoJS.AES.decrypt(password, process.env.SECRET)
             decrypted = decrypted.toString(CryptoJS.enc.Utf8);
 
-            if (decrypted != password) {
+            var userPassDecrypted = CryptoJS.AES.decrypt(user.password, process.env.SECRET);
+            userPassDecrypted = userPassDecrypted.toString(CryptoJS.enc.Utf8);
+
+            if (decrypted != userPassDecrypted) {
                 return res.status(401).send({ error: 'Invalid password!' });
             }
 
-            return res.status(200).send({message: "RETORNA O JWT AQUI IRMAO" });
+            const token = jwt.sign(
+                {
+                    id: id
+                },
+                    process.env.SECRET,
+                {
+                    expiresIn: "1 day",
+                }
+            );
+
+            return res.status(200).send({message: "Logged in successfully!", jwt: token });
         } catch (error) {
-            return res.status(404).send({ error: 'Users not found!' });
+            return res.status(404).send({ error: 'Something went wrong!' });
         }
     }
 

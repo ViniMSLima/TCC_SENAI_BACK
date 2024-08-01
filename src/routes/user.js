@@ -6,8 +6,8 @@ router
   .get("/getusers", userController.getUsers)
   .get("/getuserbyboschid", userController.getUserByBoschID)
   .get("/deleteusers", userController.clearUsers)
-  .get("/userlogin", userController.userLogin)
 
+  .post("/userlogin", userController.userLogin)
   .post("/postuser", userController.postUser)
 
   .delete("/clearusers", userController.clearUsers)
