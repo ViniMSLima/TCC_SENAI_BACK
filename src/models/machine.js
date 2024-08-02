@@ -6,6 +6,11 @@ const MachineSchema = new mongoose.Schema({
     required: true,
     minlength: 3,
   },
+  Process: {
+    type: Number,
+    required: true,
+    minlength: 4,
+  },
   Approved: {
     type: Number,
     required: false,

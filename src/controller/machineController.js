@@ -14,22 +14,26 @@ class MachineController {
 
     static async getMachinesByProcess(req, res) {
         try {
-            const machine = await Machine.findAll({ Process: req.body.process });
-            return res.status(200).send({ machine });
+            const machines = await Machine.findAll({ Process: req.body.process });
+            return res.status(200).send({ machines });
         } catch (error) {
             return res.status(404).send({ error: 'Machines not found!' });
         }
     }
     
     static async postMachine(req, res) {
-        const { AIAccuracy, Sector} = req.body;
+        const { AIAccuracy, Process, Sector} = data;
 
         if (!AIAccuracy || !Sector)
             return res.status(400).send({ message: 'Field\'s can\'t be empty' });
 
         const machine = new Machine({
             AIAccuracy,
+            Process: Process,
+            Approved: 0,
+            Denied: 0,
             Sector,
+            Scanned: 0,
             release: Date.now(),
             createdAt: Date.now(),
         });
@@ -41,7 +45,6 @@ class MachineController {
             console.log(error)
             return res.status(500).send({ message: 'Something failed while creating a User' });
         }
-
     }
 
     static async clearMachines(req, res) {

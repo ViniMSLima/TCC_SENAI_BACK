@@ -5,6 +5,7 @@ const router = express.Router();
 router
   .get("/getmachines", MachineController.getMachines)
 
-  .post("/getmachinesbyprocess/:id", MachineController.getMachinesByProcess)
+  .post("/getmachinesbyprocess", MachineController.getMachinesByProcess)
+  .post("/postmachine", MachineController.postMachine)
 
 module.exports = router;
