@@ -19,3 +19,9 @@
     "email": "bbb@gmail.com",
     "cep": "00000000"
 }
+
+{
+    "AIAccuracy": 97,
+    "Process": 2983,
+    "Sector": "ct101"
+}

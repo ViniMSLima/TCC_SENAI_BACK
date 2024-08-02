@@ -22,7 +22,7 @@ class MachineController {
     }
     
     static async postMachine(req, res) {
-        const { AIAccuracy, Process, Sector} = data;
+        const { AIAccuracy, Process, Sector} = req.body;
 
         if (!AIAccuracy || !Sector)
             return res.status(400).send({ message: 'Field\'s can\'t be empty' });
@@ -40,10 +40,10 @@ class MachineController {
 
         try {
             await machine.save();
-            res.status(201).send({ message: 'User registered successfully' });
+            res.status(201).send({ message: 'Machine registered successfully' });
         } catch (error) {
             console.log(error)
-            return res.status(500).send({ message: 'Something failed while creating a User' });
+            return res.status(500).send({ message: 'Something failed while creating a Machine' });
         }
     }
 
