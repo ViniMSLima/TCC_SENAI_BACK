@@ -12,9 +12,20 @@ class MachineController {
         }
     }
 
-    static async getMachinesByProcess(req, res) {
+    static async getMachinesBySector(req, res) {
+        const sector = req.params.sector;
         try {
-            const machines = await Machine.findAll({ Process: req.body.process });
+            const machines = await Machine.find({ Sector: sector });
+            return res.status(200).send({ machines });
+        } catch (error) {
+            return res.status(404).send({ error: 'Machines not found!' });
+        }
+    }
+
+    static async getMachinesByProcess(req, res) {
+        const process = req.params.process
+        try {
+            const machines = await Machine.find({ Process: process });
             return res.status(200).send({ machines });
         } catch (error) {
             return res.status(404).send({ error: 'Machines not found!' });
