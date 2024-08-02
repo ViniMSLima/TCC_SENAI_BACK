@@ -38,7 +38,8 @@ class UserController {
 
             const token = jwt.sign(
                 {
-                    id: id
+                    id: user.id,
+                    adm: user.adm
                 },
                     process.env.SECRET,
                 {
@@ -71,10 +72,20 @@ class UserController {
     static async postUser(req, res) {
         const { name, birthdate, adm, sex, BoschID, password, email, cep } = req.body;
 
-        if (!name || !birthdate || !adm || !sex || !BoschID || !password || !email || !cep)
+        if (!name || !birthdate || (adm != true && adm != false) || !sex || !BoschID || !password || !email || !cep)
             return res.status(400).send({ message: 'Field\'s can\'t be empty' });
         
         const encrypted = CryptoJS.AES.encrypt(password, process.env.SECRET).toString();
+
+        var verify = await User.findOne({ BoschID: BoschID });
+        if (verify) {
+            return res.status(401).send({ error: 'An user with this ID already exists!' });
+        }
+
+        verify = await User.findOne({ email: email });
+        if (verify) {
+            return res.status(401).send({ error: 'An user with this email already exists!' });
+        }
 
         const user = new User({
             name,

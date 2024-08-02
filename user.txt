@@ -1,0 +1,21 @@
+{
+    "name": "aaaaa aaaaa aaaaa",
+    "birthdate": "00/00/0000",
+    "adm": true,
+    "sex": "Masculino",
+    "BoschID": "aaaaaa",
+    "password": "aaaaaaaaaaaa",
+    "email": "aaa@gmail.com",
+    "cep": "00000000"
+}
+
+{
+    "name": "bbbbb bbbbb bbbbb",
+    "birthdate": "00/00/0000",
+    "adm": false,
+    "sex": "Masculino",
+    "BoschID": "bbbbbb",
+    "password": "bbbbbbbbbbbb",
+    "email": "bbb@gmail.com",
+    "cep": "00000000"
+}
