@@ -21,16 +21,6 @@ class MachineController {
             return res.status(404).send({ error: 'Machines not found!' });
         }
     }
-
-    static async getMachinesByProcess(req, res) {
-        const process = req.params.process
-        try {
-            const machines = await Machine.find({ Process: process });
-            return res.status(200).send({ machines });
-        } catch (error) {
-            return res.status(404).send({ error: 'Machines not found!' });
-        }
-    }
     
     static async postMachine(req, res) {
         const { AIAccuracy, Process, Sector} = req.body;
@@ -40,7 +30,7 @@ class MachineController {
 
         const machine = new Machine({
             AIAccuracy,
-            Process: Process,
+            Process: toString(Process),
             Approved: 0,
             Denied: 0,
             Sector,

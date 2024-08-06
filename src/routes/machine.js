@@ -4,7 +4,6 @@ const router = express.Router();
 
 router
   .get("/getmachines", MachineController.getMachines)
-  .get("/getmachinesbyprocess/:process", MachineController.getMachinesByProcess)
   .get("/getmachinesbysector/:sector", MachineController.getMachinesBySector)
 
   .post("/postmachine", MachineController.postMachine)

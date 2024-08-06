@@ -7,7 +7,7 @@ const MachineSchema = new mongoose.Schema({
     minlength: 3,
   },
   Process: {
-    type: Number,
+    type: String,
     required: true,
     minlength: 4,
   },
