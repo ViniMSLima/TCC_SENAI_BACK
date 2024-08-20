@@ -1,5 +1,6 @@
 const { User } = require("../models/user");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer")
 var CryptoJS = require("crypto-js");
 require("dotenv").config();
 
@@ -35,6 +36,35 @@ class UserController {
             if (decrypted != userPassDecrypted) {
                 return res.status(401).send({ error: 'Invalid password!' });
             }
+
+            // https://www.freecodecamp.org/portuguese/news/como-usar-o-nodemailer-para-enviar-emails-do-seu-servidor-do-node-js/
+            
+            let transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                  type: 'OAuth2',
+                  user: process.env.EMAIL,
+                  pass: process.env.PASSWORD,
+                  clientId: process.env.CLIENTID,
+                  clientSecret: process.env.CLIENTSECRET,
+                  refreshToken: process.env.TOKEN
+                }
+            });
+            
+            let mailOptions = {
+                from: process.env.EMAIL,
+                to: user.email,
+                subject: 'Authentication Code',
+                html: `<h1>bom dia</h1>`
+            };
+
+            transporter.sendMail(mailOptions, function(err, data) {
+                if (err) {
+                  console.log("Error " + err);
+                } else {
+                  console.log("Email sent successfully");
+                }
+            });
 
             const token = jwt.sign(
                 {
