@@ -9,6 +9,7 @@ router
 
   .post("/userlogin", userController.userLogin)
   .post("/postuser", userController.postUser)
+  .post("/getauthuser", userController.getAuthUser)
 
   .delete("/clearusers", userController.clearUsers)
   .delete("/deleteuser", userController.deleteById);

@@ -228,11 +228,10 @@ class UserController {
             
             const encryptedcode = CryptoJS.AES.encrypt(code.toString(), process.env.SECRET).toString();
 
-            const token = jwt.sign(
+            const authtoken = jwt.sign(
                 {
                     code: encryptedcode,
-                    id: user.BoschID,
-                    adm: user.adm
+                    id: user.id
                 },
                     process.env.SECRET,
                 {
@@ -240,7 +239,32 @@ class UserController {
                 }
             );
 
-            return res.status(200).send({message: "Generated code successfully!", jwt: token });
+            return res.status(200).send({ message: "Generated code successfully!", jwt: authtoken });
+        } catch (error) {
+            return res.status(404).send({ error: 'Something went wrong!' });
+        }
+    }
+
+    static async getAuthUser(req, res) {
+        try {
+            const { id } = req.body;
+
+            const user = await User.findOne({ BoschID: id });
+            if (!user) {
+                return res.status(401).send({ error: 'User not found!' });
+            }
+            
+            const usertoken = jwt.sign(
+                {
+                    user
+                },
+                    process.env.SECRET,
+                {
+                    expiresIn: "1 day",
+                }
+            );
+
+            return res.status(200).send({ message: "Logged in successfully!", jwt: usertoken })
         } catch (error) {
             return res.status(404).send({ error: 'Something went wrong!' });
         }
@@ -258,7 +282,7 @@ class UserController {
     
             return res.status(200).send({ user });
         } catch (error) {
-            return res.status(500).send({ error: 'Internal server error' });
+            return res.status(500).send({ error: 'Internal server error.' });
         }
     }
     
