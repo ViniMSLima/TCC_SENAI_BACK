@@ -231,7 +231,7 @@ class UserController {
             const authtoken = jwt.sign(
                 {
                     code: encryptedcode,
-                    id: user.id
+                    id: user.BoschID
                 },
                     process.env.SECRET,
                 {
@@ -248,7 +248,6 @@ class UserController {
     static async getAuthUser(req, res) {
         try {
             const { id } = req.body;
-
             const user = await User.findOne({ BoschID: id });
             if (!user) {
                 return res.status(401).send({ error: 'User not found!' });
