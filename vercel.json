@@ -3,9 +3,9 @@
     "builds": [{ "src": "index.js", "use": "@vercel/node" }],
     "routes": [
         { "src": "/", "dest": "/" },
-        { "src": "*", "dest": "/" },
         { "src": "/user/postuser", "dest": "/" },
         { "src": "/user/userlogin", "dest": "/" },
-        { "src": "/user/getusers", "dest": "/" }
+        { "src": "/user/getusers", "dest": "/" },
+        { "src": "/user/*", "dest": "/" }
       ]
 }
