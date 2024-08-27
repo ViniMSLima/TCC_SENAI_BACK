@@ -6,7 +6,6 @@
         { "src": "*", "dest": "/" },
         { "src": "/user/postuser", "dest": "/" },
         { "src": "/user/userlogin", "dest": "/" },
-        { "src": "/user/getusers", "dest": "/" },
-        { "src": "/user/userlogin", "dest": "/" }
+        { "src": "/user/getusers", "dest": "/" }
       ]
 }
