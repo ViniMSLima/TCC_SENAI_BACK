@@ -10,8 +10,8 @@ router
   .post("/userlogin", userController.userLogin)
   .post("/postuser", userController.postUser)
   .post("/getauthuser", userController.getAuthUser)
+  .post("/newpassword/:boschID", userController.updateByBoschId)
 
   .delete("/clearusers", userController.clearUsers)
   .delete("/deleteuser", userController.deleteById);
-
 module.exports = router;

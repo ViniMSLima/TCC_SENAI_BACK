@@ -26,7 +26,7 @@ class UserController {
             if (!user) {
                 return res.status(401).send({ error: 'User not found!' });
             }
-
+            
             var decrypted = CryptoJS.AES.decrypt(password, process.env.SECRET)
             decrypted = decrypted.toString(CryptoJS.enc.Utf8);
 
@@ -247,8 +247,8 @@ class UserController {
 
     static async getAuthUser(req, res) {
         try {
-            const { id } = req.body;
-            const user = await User.findOne({ BoschID: id });
+            const { boschID } = req.body;
+            const user = await User.findOne({ BoschID: boschID });
             if (!user) {
                 return res.status(401).send({ error: 'User not found!' });
             }
@@ -289,7 +289,7 @@ class UserController {
         const { name, birthdate, adm, sex, BoschID, password, email, cep } = req.body;
 
         if (!name || !birthdate || (adm != true && adm != false) || !sex || !BoschID || !password || !email || !cep)
-            return res.status(400).send({ message: 'Field\'s can\'t be empty' });
+            return res.status(400).send({ message: 'Field\'s can\'t be empty.' });
         
         const encrypted = CryptoJS.AES.encrypt(password, process.env.SECRET).toString();
 
@@ -308,7 +308,7 @@ class UserController {
             birthdate,
             adm,
             sex,
-            BoschID,
+            BoschID: CryptoJS.AES.encrypt(BoschID, process.env.SECRET).toString(),
             password: encrypted,
             email,
             cep,
@@ -318,10 +318,10 @@ class UserController {
 
         try {
             await user.save();
-            res.status(201).send({ message: 'User registered successfully' });
+            res.status(201).send({ message: 'User registered successfully!' });
         } catch (error) {
             console.log(error)
-            return res.status(500).send({ message: 'Something failed while creating a User' });
+            return res.status(500).send({ message: 'Something failed while creating a user.' });
         }
 
     }
@@ -329,10 +329,10 @@ class UserController {
     static async clearUsers(req, res) {
         try {
             await User.deleteMany({});
-            return res.status(200).send({ message: 'All Users deleted successfully' });
+            return res.status(200).send({ message: 'All Users deleted successfully!' });
         } catch (error) {
             console.error(error);
-            return res.status(500).send({ message: 'Something went wrong while clearing Users' });
+            return res.status(500).send({ message: 'Something went wrong while clearing users.' });
         }
     }
 
@@ -343,17 +343,33 @@ class UserController {
             const deletedUser = await User.findByIdAndDelete(id);
     
             if (!deletedUser) {
-                return res.status(404).send({ message: 'User not found' });
+                return res.status(404).send({ message: 'User not found!' });
             }
     
-            return res.status(200).send({ message: 'User deleted successfully' });
+            return res.status(200).send({ message: 'User deleted successfully!' });
         } catch (error) {
             console.error(error);
-            return res.status(500).send({ message: 'Something went wrong while deleting the User' });
+            return res.status(500).send({ message: 'Something went wrong while deleting user.' });
         }
     }
     
+    static async updateByBoschId(req, res) {
+        try {
+            const { boschID } = req.params;
+            const { newPassword } = req.body;
+    
+            var IdDecrypted = CryptoJS.AES.decrypt(boschID, process.env.SECRET);
+            IdDecrypted = IdDecrypted.toString(CryptoJS.enc.Utf8);
+            
+            const user = await User.findOne({ BoschID: IdDecrypted });
+            await user.updateOne({ $set: { password: newPassword }});
 
+            return res.status(200).send({ message: 'User updated successfully!'});
+        } catch(error) {
+            console.error(error);
+            return res.status(500).send({ message: 'Something went wrong while updating user.' });
+        }
+    }
 }
 
 module.exports = UserController;
