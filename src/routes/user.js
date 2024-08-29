@@ -10,7 +10,7 @@ router
   .post("/userlogin", userController.userLogin)
   .post("/postuser", userController.postUser)
   .post("/getauthuser", userController.getAuthUser)
-  .post("/newpassword/:boschID", userController.updateByBoschId)
+  .post("/newpassword", userController.updateByBoschId)
   .post("/sendemail", userController.searchAndSend)
 
   .delete("/clearusers", userController.clearUsers)

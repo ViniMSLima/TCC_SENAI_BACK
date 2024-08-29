@@ -356,9 +356,9 @@ class UserController {
     static async updateByBoschId(req, res) {
         try {
             const { boschID, newPassword } = req.body;
-            
-            boschID = boschID.replace("#", "/")
-            var IdDecrypted = CryptoJS.AES.decrypt(boschID, process.env.SECRET);
+            const id = boschID.replace("$", "/")
+
+            var IdDecrypted = CryptoJS.AES.decrypt(id, process.env.SECRET);
             IdDecrypted = IdDecrypted.toString(CryptoJS.enc.Utf8);
             
             const user = await User.findOne({ BoschID: IdDecrypted });
@@ -377,7 +377,7 @@ class UserController {
             
             const user = await User.findOne({ email: email });
             var encrypted = CryptoJS.AES.encrypt(user.BoschID, process.env.SECRET).toString();
-            encrypted = encrypted.replace("/", "#")
+            encrypted = encrypted.replace("/", "$")
             
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
