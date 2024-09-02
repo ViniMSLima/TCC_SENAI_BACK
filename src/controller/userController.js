@@ -233,9 +233,12 @@ class UserController {
             };
 
             await new Promise((resolve, reject) => {
-                transporter.sendMail(mailOptions, function(err, data) {
-                    if (err) {
-                    console.log("Error " + err);
+                transporter.sendMail(mailOptions, function(error, success) {
+                    if (error) {
+                        console.log("Error " + err);
+                        reject(error);
+                    } else {
+                        resolve(success);
                     }
                 });
             });
