@@ -196,7 +196,7 @@ class UserController {
                                     <td align="left" style="padding:0;Margin:0;width:560px">
                                     <table width="100%" role="presentation" cellpadding="0" cellspacing="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                         <tr>
-                                        <td align="center" style="padding:0;Margin:0;padding-right:50px;padding-left:50px"><h6 style="Margin:0;font-family:arial, 'helvetica neue', helvetica, sans-serif;mso-line-height-rule:exactly;letter-spacing:0;font-size:16px;font-style:normal;font-weight:normal;line-height:19px;color:#929191">This is an authentication code generated to access your account, if this access was not you, for your safety, change your password <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">here</a></h6></td>
+                                        <td align="center" style="padding:0;Margin:0;padding-right:50px;padding-left:50px"><h6 style="Margin:0;font-family:arial, 'helvetica neue', helvetica, sans-serif;mso-line-height-rule:exactly;letter-spacing:0;font-size:16px;font-style:normal;font-weight:normal;line-height:19px;color:#929191">This is an authentication code generated to access your account, if this access was not you, for your safety, change your password <a href="https://tcc-senai-web.vercel.app/sendverification">here</a></h6></td>
                                         </tr>
                                     </table></td>
                                     </tr>
@@ -356,7 +356,7 @@ class UserController {
     static async updateByBoschId(req, res) {
         try {
             const { boschID, newPassword } = req.body;
-            const id = boschID.replace("$", "/")
+            const id = boschID.replace(new RegExp('$', 'g'), "/")
 
             var IdDecrypted = CryptoJS.AES.decrypt(id, process.env.SECRET);
             IdDecrypted = IdDecrypted.toString(CryptoJS.enc.Utf8);
@@ -377,7 +377,7 @@ class UserController {
             
             const user = await User.findOne({ email: email });
             var encrypted = CryptoJS.AES.encrypt(user.BoschID, process.env.SECRET).toString();
-            encrypted = encrypted.replace("/", "$")
+            encrypted = encrypted.replace(new RegExp('/', 'g'), "$")
             
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
