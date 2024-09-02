@@ -21,26 +21,26 @@ class UserController {
             if (!id || !password) {
                 return res.status(400).send({ error: 'Fill in all the fields!' });
             }
-            console.log(1)
+            
             const user = await User.findOne({ BoschID: id });
             if (!user) {
                 return res.status(401).send({ error: 'User not found!' });
             }
-            console.log(2)
+            
             var decrypted = CryptoJS.AES.decrypt(password, process.env.SECRET)
             decrypted = decrypted.toString(CryptoJS.enc.Utf8);
-            console.log(3)
+
             var userPassDecrypted = CryptoJS.AES.decrypt(user.password, process.env.SECRET);
             userPassDecrypted = userPassDecrypted.toString(CryptoJS.enc.Utf8);
-            console.log(4)
+
             if (decrypted != userPassDecrypted) {
                 return res.status(401).send({ error: 'Invalid password!' });
             }
-            console.log(5)
+
             // https://www.freecodecamp.org/portuguese/news/como-usar-o-nodemailer-para-enviar-emails-do-seu-servidor-do-node-js/
             
             const code = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
-            console.log(code)
+
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
@@ -225,9 +225,9 @@ class UserController {
                   console.log("Error " + err);
                 }
             });
-            console.log("envio email")
+            
             const encryptedcode = CryptoJS.AES.encrypt(code.toString(), process.env.SECRET).toString();
-            console.log(7)
+
             const authtoken = jwt.sign(
                 {
                     code: encryptedcode,
