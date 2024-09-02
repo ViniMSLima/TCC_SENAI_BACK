@@ -11,12 +11,15 @@ const MachineSchema = new mongoose.Schema({
     required: true,
     minlength: 4,
   },
-  Approved: {
+  Blue: {
     type: Number,
     required: false,
-    minlength: 2,
   },
-  Denied: {
+  Red: {
+    type: Number,
+    required: false
+  },
+  Rejected: {
     type: Number,
     required: false,
     minlength: 2,
