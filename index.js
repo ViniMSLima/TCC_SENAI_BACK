@@ -1,13 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose"); // Add mongoose for MongoDB
+require("dotenv").config();
 
 const app = express();
 
 // MongoDB connection
 async function connectToDB() {
   try {
-    await mongoose.connect("mongodb+srv://vinisarylima:U2FsdGVkX19KiK2gxjgwptjL1MM7axuytBzh2cvkNUc=@tcc.wvxjo.mongodb.net/", {
+    await mongoose.connect(process.env.MONGO_DB_KEY, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
