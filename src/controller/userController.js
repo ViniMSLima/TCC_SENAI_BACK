@@ -373,14 +373,17 @@ class UserController {
     static async updateByBoschId(req, res) {
         try {
             const { boschID, newPassword } = req.body;
-            console.log(boschID)
-            const id = boschID.replace(new RegExp('$', 'g'), "/")
-            console.log(id)
+
+            var id = boschID;
+            for (var i = 0; i < id.length; i++) {
+                if (id[i] == "$")
+                    id[i] = "/";
+            }
+
             var IdDecrypted = CryptoJS.AES.decrypt(id, process.env.SECRET);
             IdDecrypted = IdDecrypted.toString(CryptoJS.enc.Utf8);
-            console.log(IdDecrypted)
+
             const user = await User.findOne({ BoschID: IdDecrypted });
-            console.log(user)
             await user.updateOne({ $set: { password: newPassword }});
 
             return res.status(200).send({ message: 'User updated successfully!'});
@@ -396,7 +399,10 @@ class UserController {
             
             const user = await User.findOne({ email: email });
             var encrypted = CryptoJS.AES.encrypt(user.BoschID, process.env.SECRET).toString();
-            encrypted = encrypted.replace(new RegExp('/', 'g'), "$")
+            for (var i = 0; i < encrypted.length; i++) {
+                if (encrypted[i] == "/")
+                    encrypted[i] = "$";
+            }
             
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
