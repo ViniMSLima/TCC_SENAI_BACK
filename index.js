@@ -20,14 +20,14 @@ async function connectToDB() {
 
 connectToDB(); // Call the function to connect to MongoDB
 
-function setCorsHeaders(req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-}
-
-app.use(setCorsHeaders);
+app.use(
+  cors({
+    origin: true,
+    methods: "GET,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  })
+);
 
 require("./startup/routes")(app);
 
