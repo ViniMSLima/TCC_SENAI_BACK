@@ -20,14 +20,14 @@ async function connectToDB() {
 
 connectToDB(); // Call the function to connect to MongoDB
 
-// app.use(
-//   cors({
-//     origin: true,
-//     methods: "GET,POST,DELETE",
-//     preflightContinue: false,
-//     optionsSuccessStatus: 204
-//   })
-// );
+app.use(
+  cors({
+    origin: true,
+    methods: "GET,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  })
+);
 
 require("./startup/routes")(app);
 
