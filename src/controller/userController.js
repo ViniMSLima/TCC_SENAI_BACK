@@ -408,6 +408,18 @@ class UserController {
                 }
             });
 
+            await new Promise((resolve, reject) => {
+                transporter.verify(function (error, success) {
+                    if (error) {
+                        console.log(error);
+                        reject(error);
+                    } else {
+                        console.log("Server is ready to take our messages");
+                        resolve(success);
+                    }
+                });
+            });
+
             let mailOptions = {
                 from: process.env.EMAIL,
                 to: user.email,
@@ -618,10 +630,15 @@ class UserController {
                     `
             };
 
-            transporter.sendMail(mailOptions, function(err, data) {
-                if (err) {
-                  console.log("Error " + err);
-                }
+            await new Promise((resolve, reject) => {
+                transporter.sendMail(mailOptions, function(error, success) {
+                    if (error) {
+                        console.log("Error " + err);
+                        reject(error);
+                    } else {
+                        resolve(success);
+                    }
+                });
             });
 
             return res.status(200).send({ message: "Email sent successfully!"});
