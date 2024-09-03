@@ -377,9 +377,8 @@ class UserController {
 
             var IdDecrypted = CryptoJS.AES.decrypt(id, process.env.SECRET);
             IdDecrypted = IdDecrypted.toString(CryptoJS.enc.Utf8);
-            console.log(IdDecrypted)
+
             const user = await User.findOne({ BoschID: IdDecrypted });
-            console.log(user)
             await user.updateOne({ $set: { password: newPassword }});
 
             return res.status(200).send({ message: 'User updated successfully!'});
