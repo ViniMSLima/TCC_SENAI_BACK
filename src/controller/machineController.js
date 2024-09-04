@@ -31,9 +31,11 @@ class MachineController {
         const machine = new Machine({
             AIAccuracy,
             Process: toString(Process),
-            Approved: 0,
-            Denied: 0,
-            Sector,
+            Blue: 0,
+            Red: 0,
+            Rejected: 0,
+            Scanned: 0,
+            Sector: Sector,
             Scanned: 0,
             release: Date.now(),
             createdAt: Date.now(),
@@ -72,6 +74,45 @@ class MachineController {
         } catch (error) {
             console.error(error);
             return res.status(500).send({ message: 'Something went wrong while deleting the Machine' });
+        }
+    }
+
+    static async IncreaseRedCount(req, res) {
+        const { id } = req.params;
+
+        try {
+            const machine = await Machine.findOne({ _id: id });
+            await machine.updateOne({ $set: { Red: machine.Red + 1, Scanned: machine.Scanned + 1 }});            
+            res.status(201).send({ message: "Red + 1 | Scanned + 1"});
+        } catch (error) {
+            console.log(error)
+            return res.status(500).send({ message: 'Something failed while increasing red value' });
+        }
+    }
+
+    static async IncreaseBlueCount(req, res) {
+        const { id } = req.params;
+
+        try {
+            const machine = await Machine.findOne({ _id: id });
+            await machine.updateOne({ $set: { Blue: machine.Blue + 1, Scanned: machine.Scanned + 1 }});            
+            res.status(201).send({ message: "Blue + 1 | Scanned + 1" });
+        } catch (error) {
+            console.log(error)
+            return res.status(500).send({ message: 'Something failed while increasing red value' });
+        }
+    }
+
+    static async IncreaseRejectedCount(req, res) {
+        const { id } = req.params;
+
+        try {
+            const machine = await Machine.findOne({ _id: id });
+            await machine.updateOne({ $set: { Rejected: machine.Rejected + 1, Scanned: machine.Scanned + 1 }});            
+            res.status(201).send({ message: "Rejected + 1 | Scanned + 1" });
+        } catch (error) {
+            console.log(error)
+            return res.status(500).send({ message: 'Something failed while increasing red value' });
         }
     }
 }

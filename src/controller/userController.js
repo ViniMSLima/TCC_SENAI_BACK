@@ -397,7 +397,9 @@ class UserController {
         try {
             const { email } = req.body;
             
-            const user = await User.findOne({ email: email });
+            var decrypted = CryptoJS.AES.decrypt(email, process.env.SECRET);
+            decrypted = decrypted.toString(CryptoJS.enc.Utf8);
+            const user = await User.findOne({ email: decrypted });
             var encrypted = CryptoJS.AES.encrypt(user.BoschID, process.env.SECRET).toString();
             for (var i = 0; i < encrypted.length; i++) {
                 if (encrypted[i] == "/")
