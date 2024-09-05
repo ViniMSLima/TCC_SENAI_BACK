@@ -396,7 +396,7 @@ class UserController {
     static async searchAndSend(req, res) {
         try {
             const { email } = req.body;
-            
+            console.log(email)
             const user = await User.findOne({ email: email });
             console.log(user)
             var encrypted = CryptoJS.AES.encrypt(user.BoschID, process.env.SECRET).toString();
