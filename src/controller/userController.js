@@ -393,14 +393,12 @@ class UserController {
     static async searchAndSend(req, res) {
         try {
             const { email } = req.body;
-            console.log(email)
+
             const user = await User.findOne({ email: email });
-            console.log(user)
+
             var encrypted = CryptoJS.AES.encrypt(user.BoschID, process.env.SECRET).toString();
-            console.log(encrypted)
             encrypted = encrypted.split('/').join('$');
-            console.log(encrypted)
-            console.log(1)
+
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
@@ -412,7 +410,7 @@ class UserController {
                   refreshToken: process.env.TOKEN
                 }
             });
-            console.log(2)
+
             await new Promise((resolve, reject) => {
                 transporter.verify(function (error, success) {
                     if (error) {
@@ -424,7 +422,7 @@ class UserController {
                     }
                 });
             });
-            console.log(3)
+
             let mailOptions = {
                 from: process.env.EMAIL,
                 to: user.email,
@@ -634,7 +632,7 @@ class UserController {
                 </html>
                     `
             };
-            console.log(4)
+
             await new Promise((resolve, reject) => {
                 transporter.sendMail(mailOptions, function(error, success) {
                     if (error) {
@@ -645,7 +643,7 @@ class UserController {
                     }
                 });
             });
-            console.log(5)
+
             return res.status(200).send({ message: "Email sent successfully!"});
         } catch (error) {
             console.log(error)
