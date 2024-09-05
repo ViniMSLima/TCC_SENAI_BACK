@@ -325,7 +325,7 @@ class UserController {
             birthdate,
             adm,
             sex,
-            BoschID: CryptoJS.AES.encrypt(BoschID, process.env.SECRET).toString(),
+            BoschID: BoschID,
             password: encrypted,
             email,
             cep,
@@ -405,6 +405,7 @@ class UserController {
                 if (encrypted[i] == "/")
                     encrypted[i] = "$";
             }
+            console.log(encrypted)
             console.log(1)
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
