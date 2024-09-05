@@ -375,10 +375,7 @@ class UserController {
             const { boschID, newPassword } = req.body;
 
             var id = boschID;
-            for (var i = 0; i < id.length; i++) {
-                if (id[i] == "$")
-                    id[i] = "/";
-            }
+            id = id.split('$').join('/');
 
             var IdDecrypted = CryptoJS.AES.decrypt(id, process.env.SECRET);
             IdDecrypted = IdDecrypted.toString(CryptoJS.enc.Utf8);
@@ -396,16 +393,12 @@ class UserController {
     static async searchAndSend(req, res) {
         try {
             const { email } = req.body;
-            
+
             const user = await User.findOne({ email: email });
-            console.log(user)
+
             var encrypted = CryptoJS.AES.encrypt(user.BoschID, process.env.SECRET).toString();
-            console.log(encrypted)
-            for (var i = 0; i < encrypted.length; i++) {
-                if (encrypted[i] == "/")
-                    encrypted[i] = "$";
-            }
-            
+            encrypted = encrypted.split('/').join('$');
+
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
