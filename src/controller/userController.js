@@ -325,7 +325,7 @@ class UserController {
             birthdate,
             adm,
             sex,
-            BoschID: CryptoJS.AES.encrypt(BoschID, process.env.SECRET).toString(),
+            BoschID: BoschID,
             password: encrypted,
             email,
             cep,
