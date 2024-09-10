@@ -21,12 +21,12 @@ class UserController {
             if (!id || !password) {
                 return res.status(400).send({ error: 'Fill in all the fields!' });
             }
-
+            
             const user = await User.findOne({ BoschID: id });
             if (!user) {
                 return res.status(401).send({ error: 'User not found!' });
             }
-
+            
             var decrypted = CryptoJS.AES.decrypt(password, process.env.SECRET)
             decrypted = decrypted.toString(CryptoJS.enc.Utf8);
 
@@ -38,35 +38,39 @@ class UserController {
             }
 
             // https://www.freecodecamp.org/portuguese/news/como-usar-o-nodemailer-para-enviar-emails-do-seu-servidor-do-node-js/
-
+            
             const code = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
 
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    type: 'OAuth2',
-                    user: process.env.EMAIL,
-                    pass: process.env.PASSWORD,
-                    clientId: process.env.CLIENTID,
-                    clientSecret: process.env.CLIENTSECRET,
-                    refreshToken: process.env.TOKEN
+                  type: 'OAuth2',
+                  user: process.env.EMAIL,
+                  pass: process.env.PASSWORD,
+                  clientId: process.env.CLIENTID,
+                  clientSecret: process.env.CLIENTSECRET,
+                  refreshToken: process.env.TOKEN
                 }
             });
 
-            await transporter.verify(function (error, success) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log("Server is ready to take our messages");
-                }
-            })
+            await new Promise((resolve, reject) => {
+                transporter.verify(function (error, success) {
+                    if (error) {
+                        console.log(error);
+                        reject(error);
+                    } else {
+                        console.log("Server is ready to take our messages");
+                        resolve(success);
+                    }
+                });
+            });
 
             let mailOptions = {
                 from: process.env.EMAIL,
                 to: user.email,
                 subject: 'Authentication Code',
-                html:
-                    `
+                html: 
+                `
                     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
                     <html dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
                     <head>
@@ -228,14 +232,17 @@ class UserController {
                 `
             };
 
-            await transporter.sendMail(mailOptions, function (error, success) {
-                if (error) {
-                    console.log("Error " + err);
-                } else {
-                    console.log(success);
-                }
+            await new Promise((resolve, reject) => {
+                transporter.sendMail(mailOptions, function(error, success) {
+                    if (error) {
+                        console.log("Error " + err);
+                        reject(error);
+                    } else {
+                        resolve(success);
+                    }
+                });
             });
-
+            
             const encryptedcode = CryptoJS.AES.encrypt(code.toString(), process.env.SECRET).toString();
 
             const authtoken = jwt.sign(
@@ -243,7 +250,7 @@ class UserController {
                     code: encryptedcode,
                     id: user.BoschID
                 },
-                process.env.SECRET,
+                    process.env.SECRET,
                 {
                     expiresIn: "1 day",
                 }
@@ -262,12 +269,12 @@ class UserController {
             if (!user) {
                 return res.status(401).send({ error: 'User not found!' });
             }
-
+            
             const usertoken = jwt.sign(
                 {
                     user
                 },
-                process.env.SECRET,
+                    process.env.SECRET,
                 {
                     expiresIn: "1 day",
                 }
@@ -282,25 +289,25 @@ class UserController {
     static async getUserByBoschID(req, res) {
         try {
             const { boschID } = req.body;
-
+    
             const user = await User.findOne({ BoschID: boschID });
-
+    
             if (!user) {
                 return res.status(404).send({ error: 'User not found!' });
             }
-
+    
             return res.status(200).send({ user });
         } catch (error) {
             return res.status(500).send({ error: 'Internal server error.' });
         }
     }
-
+    
     static async postUser(req, res) {
         const { name, birthdate, adm, sex, BoschID, password, email, cep } = req.body;
 
         if (!name || !birthdate || (adm != true && adm != false) || !sex || !BoschID || !password || !email || !cep)
             return res.status(400).send({ message: 'Field\'s can\'t be empty.' });
-
+        
         const encrypted = CryptoJS.AES.encrypt(password, process.env.SECRET).toString();
 
         var verify = await User.findOne({ BoschID: BoschID });
@@ -348,21 +355,21 @@ class UserController {
 
     static async deleteById(req, res) {
         const { id } = req.params;
-
+        
         try {
             const deletedUser = await User.findByIdAndDelete(id);
-
+    
             if (!deletedUser) {
                 return res.status(404).send({ message: 'User not found!' });
             }
-
+    
             return res.status(200).send({ message: 'User deleted successfully!' });
         } catch (error) {
             console.error(error);
             return res.status(500).send({ message: 'Something went wrong while deleting user.' });
         }
     }
-
+    
     static async updateByBoschId(req, res) {
         try {
             const { boschID, newPassword } = req.body;
@@ -374,10 +381,10 @@ class UserController {
             IdDecrypted = IdDecrypted.toString(CryptoJS.enc.Utf8);
 
             const user = await User.findOne({ BoschID: IdDecrypted });
-            await user.updateOne({ $set: { password: newPassword } });
+            await user.updateOne({ $set: { password: newPassword }});
 
-            return res.status(200).send({ message: 'User updated successfully!' });
-        } catch (error) {
+            return res.status(200).send({ message: 'User updated successfully!'});
+        } catch(error) {
             console.error(error);
             return res.status(500).send({ message: 'Something went wrong while updating user.' });
         }
@@ -395,29 +402,33 @@ class UserController {
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    type: 'OAuth2',
-                    user: process.env.EMAIL,
-                    pass: process.env.PASSWORD,
-                    clientId: process.env.CLIENTID,
-                    clientSecret: process.env.CLIENTSECRET,
-                    refreshToken: process.env.TOKEN
+                  type: 'OAuth2',
+                  user: process.env.EMAIL,
+                  pass: process.env.PASSWORD,
+                  clientId: process.env.CLIENTID,
+                  clientSecret: process.env.CLIENTSECRET,
+                  refreshToken: process.env.TOKEN
                 }
             });
 
-            await transporter.verify(function (error, success) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log("Server is ready to take our messages");
-                }
+            await new Promise((resolve, reject) => {
+                transporter.verify(function (error, success) {
+                    if (error) {
+                        console.log(error);
+                        reject(error);
+                    } else {
+                        console.log("Server is ready to take our messages");
+                        resolve(success);
+                    }
+                });
             });
 
             let mailOptions = {
                 from: process.env.EMAIL,
                 to: user.email,
                 subject: 'Password changing',
-                html:
-                    `
+                html: 
+                `
                 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
                 <html dir="ltr" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
                 <head>
@@ -622,15 +633,18 @@ class UserController {
                     `
             };
 
-            await transporter.sendMail(mailOptions, function (error, success) {
-                if (error) {
-                    console.log("Error " + error);
-                } else {
-                    console.log(success);
-                }
+            await new Promise((resolve, reject) => {
+                transporter.sendMail(mailOptions, function(error, success) {
+                    if (error) {
+                        console.log("Error " + err);
+                        reject(error);
+                    } else {
+                        resolve(success);
+                    }
+                });
             });
 
-            return res.status(200).send({ message: "Email sent successfully!" });
+            return res.status(200).send({ message: "Email sent successfully!"});
         } catch (error) {
             console.log(error)
             return res.status(500).send({ message: 'Something went wrong while sending email.' });
