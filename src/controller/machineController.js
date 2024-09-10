@@ -30,7 +30,7 @@ class MachineController {
 
         const machine = new Machine({
             AIAccuracy,
-            Process: toString(Process),
+            Process,
             Blue: 0,
             Red: 0,
             Rejected: 0,
