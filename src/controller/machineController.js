@@ -1,5 +1,4 @@
 const { Machine } = require("../models/machine");
-
 require("dotenv").config();
 
 class MachineController {
