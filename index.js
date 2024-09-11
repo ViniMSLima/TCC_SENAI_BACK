@@ -11,8 +11,10 @@ async function connectToDB() {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+    console.log(process.env.MONGODB)
     console.log("Connected to MongoDB Atlas");
   } catch (error) {
+    console.log(process.env.MONGODB)
     console.error("Error connecting to MongoDB Atlas:", error);
   }
 }
