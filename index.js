@@ -8,7 +8,7 @@ const app = express();
 // MongoDB connection
 async function connectToDB() {
   try {
-    await mongoose.connect("http://localhost:27017/test", {
+    await mongoose.connect(process.env.MONGODB, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
