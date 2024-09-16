@@ -4,6 +4,32 @@ const nodemailer = require("nodemailer")
 var CryptoJS = require("crypto-js");
 require("dotenv").config();
 
+async function wrappedEmail(mailOptions) {
+    return new Promise((resolve, reject) => {
+        let transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              type: 'OAuth2',
+              user: process.env.EMAIL,
+              pass: process.env.PASSWORD,
+              clientId: process.env.CLIENTID,
+              clientSecret: process.env.CLIENTSECRET,
+              refreshToken: process.env.TOKEN
+            }
+        });
+
+        transporter.sendMail(mailOptions, (error, success) => {
+            if (error) {
+                console.log("Error: " + error);
+                resolve(false);
+            } else {
+                console.log(success);
+                resolve(true);
+            }
+        });
+    });
+}
+
 class UserController {
     static async getUsers(req, res) {
         try {
@@ -41,31 +67,7 @@ class UserController {
             
             const code = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
 
-            const transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                  type: 'OAuth2',
-                  user: process.env.EMAIL,
-                  pass: process.env.PASSWORD,
-                  clientId: process.env.CLIENTID,
-                  clientSecret: process.env.CLIENTSECRET,
-                  refreshToken: process.env.TOKEN
-                }
-            });
-
-            await new Promise((resolve, reject) => {
-                transporter.verify(function (error, success) {
-                    if (error) {
-                        console.log(error);
-                        reject(error);
-                    } else {
-                        console.log("Server is ready to take our messages");
-                        resolve(success);
-                    }
-                });
-            });
-
-            let mailOptions = {
+            await wrappedEmail({
                 from: process.env.EMAIL,
                 to: user.email,
                 subject: 'Authentication Code',
@@ -230,17 +232,6 @@ class UserController {
                     </body>
                     </html>
                 `
-            };
-
-            await new Promise((resolve, reject) => {
-                transporter.sendMail(mailOptions, function(error, success) {
-                    if (error) {
-                        console.log("Error " + err);
-                        reject(error);
-                    } else {
-                        resolve(success);
-                    }
-                });
             });
             
             const encryptedcode = CryptoJS.AES.encrypt(code.toString(), process.env.SECRET).toString();
@@ -399,31 +390,7 @@ class UserController {
             var encrypted = CryptoJS.AES.encrypt(user.BoschID, process.env.SECRET).toString();
             encrypted = encrypted.split('/').join('$');
 
-            const transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                  type: 'OAuth2',
-                  user: process.env.EMAIL,
-                  pass: process.env.PASSWORD,
-                  clientId: process.env.CLIENTID,
-                  clientSecret: process.env.CLIENTSECRET,
-                  refreshToken: process.env.TOKEN
-                }
-            });
-
-            await new Promise((resolve, reject) => {
-                transporter.verify(function (error, success) {
-                    if (error) {
-                        console.log(error);
-                        reject(error);
-                    } else {
-                        console.log("Server is ready to take our messages");
-                        resolve(success);
-                    }
-                });
-            });
-
-            let mailOptions = {
+            await wrappedEmail({
                 from: process.env.EMAIL,
                 to: user.email,
                 subject: 'Password changing',
@@ -630,8 +597,8 @@ class UserController {
                 </div>
                 </body>
                 </html>
-                    `
-            };
+                `
+            });
 
             await new Promise((resolve, reject) => {
                 transporter.sendMail(mailOptions, function(error, success) {
